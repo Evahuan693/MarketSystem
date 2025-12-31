@@ -39,6 +39,28 @@ DatabaseManager::~DatabaseManager() {
 
 DatabaseManager& DatabaseManager::getInstance() {
     static DatabaseManager instance;
+
+    // If the on-disk database file was removed by tests between suites, reinitialize
+    // so each test suite can start with a clean database when using test mode.
+    QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QString dbPath = appDataPath + "/marketplace.db";
+
+    if (!QFile::exists(dbPath) || !instance.m_database.isOpen()) {
+        // Close and remove the existing connection safely, then recreate and initialize.
+        QString connName = instance.m_database.connectionName();
+        instance.close();
+        // Reset the QSqlDatabase handle before calling removeDatabase
+        instance.m_database = QSqlDatabase();
+        QSqlDatabase::removeDatabase(connName);
+
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+        db.setDatabaseName(dbPath);
+        instance.m_database = db;
+        if (!instance.initializeDatabase()) {
+            qCritical() << "Failed to reinitialize database in getInstance";
+        }
+    }
+
     return instance;
 }
 
