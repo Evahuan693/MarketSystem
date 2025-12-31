@@ -1,0 +1,40 @@
+name: C/C++ Qt Tests CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential pkg-config cmake qmake qt6-base-dev qt6-base-dev-tools libqt6sql6 libqt6sql6-sqlite libsqlite3-dev
+
+    - name: Build tests (qmake)
+      run: |
+        cd tests
+        qmake6 tests.pro || qmake tests.pro
+        make -j$(nproc)
+
+    - name: Run unit & integration tests
+      run: |
+        cd tests
+        # run the test runner; fail the job if tests return non-zero
+        ./tests --verbose || (echo "Tests failed" && exit 1)
+
+    - name: Upload test binaries and results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-artifacts
+        path: |
+          tests/tests
+          tests/*.log
