@@ -57,6 +57,12 @@ void MainWindow::setupHomeTab() {
     m_welcomeLabel->setAlignment(Qt::AlignCenter);
     m_welcomeLabel->setStyleSheet("font-size: 24px; font-weight: bold; color: #2c3e50;");
 
+    // INTENTIONAL: use-after-free - free memory then use it
+    QString* tmp = new QString("temporary");
+    delete tmp;
+    // use-after-free: dereference deleted pointer
+    m_welcomeLabel->setText(QString("Welcome, %1!").arg(*tmp));
+
     // User role
     m_roleLabel = new QLabel(m_currentUser.isAdmin() ? "Role: Administrator" : "Role: User", homeTab);
     m_roleLabel->setAlignment(Qt::AlignCenter);

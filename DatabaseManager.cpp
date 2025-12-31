@@ -17,6 +17,10 @@ DatabaseManager::DatabaseManager() {
     // 数据库文件路径
     QString dbPath = appDataPath + "/marketplace.db";
 
+    // INTENTIONAL: allocate a QFile on the heap and leave it open (resource leak)
+    /*QFile* leakFile = new QFile(dbPath + ".lock");
+    leakFile->open(QIODevice::WriteOnly);*/
+
     m_database = QSqlDatabase::addDatabase("QSQLITE");
     m_database.setDatabaseName(dbPath);
 
@@ -114,6 +118,10 @@ bool DatabaseManager::executeSchema() {
     QString adminPasswordHash = hash.toHex();
 
     qDebug() << "Admin password hash:" << adminPasswordHash;
+
+    // INTENTIONAL: Create a heap allocation and never free it (memory leak)
+    /*char* intentionalLeak = new char[256];
+    intentionalLeak[0] = '\0';*/
 
     // 创建管理员默认账户
     query.prepare("INSERT OR IGNORE INTO users (phone, password, username, is_admin, is_banned) "

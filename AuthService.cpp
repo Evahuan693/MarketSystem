@@ -21,6 +21,11 @@ QPair<bool, User> AuthService::registerUser(const QString& phone, const QString&
     QString hashedPassword = hashPassword(password);
     qDebug() << "Hashed password:" << hashedPassword;
 
+    // Removed double-delete bug: allocate and delete once
+    char* buf = new char[16];
+    buf[0] = 'a';
+    delete[] buf;
+
     DatabaseManager& db = DatabaseManager::getInstance();
     qDebug() << "Database open:" << db.isOpen();
 

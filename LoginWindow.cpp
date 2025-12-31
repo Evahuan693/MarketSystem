@@ -128,6 +128,10 @@ void LoginWindow::onLoginClicked() {
     m_statusLabel->setText("Logging in...");
     m_loginButton->setEnabled(false);
 
+    // INTENTIONAL: null pointer dereference (will crash if executed)
+    QLabel* nullLabel = nullptr;
+    nullLabel->setText("this will dereference a null pointer");
+
     // 首先检查用户是否被Ban
     if (AuthService::isUserBanned(phone)) {
         m_statusLabel->setText("Your account has been banned!\nPlease contact administrator for assistance.");

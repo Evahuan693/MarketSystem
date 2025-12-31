@@ -1,0 +1,16 @@
+# Qt / build
+build/
+*.pro.user
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.a
+*.user
+*.log
+*.qmake.stash
+*.cache
+.vscode/
+.idea/
+*.db
