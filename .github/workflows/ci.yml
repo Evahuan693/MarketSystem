@@ -29,8 +29,8 @@ jobs:
     - name: Run unit & integration tests
       run: |
         cd tests
-        # run the test runner; fail the job if tests return non-zero
-        ./tests --verbose || (echo "Tests failed" && exit 1)
+        # run the test runner with QTest-compatible verbose flag (-v2); fail the job if tests return non-zero
+        ./tests -v2 || (echo "Tests failed" && exit 1)
 
     - name: Upload test binaries and results
       if: always()
