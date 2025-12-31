@@ -16,8 +16,9 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        # 'qmake' package name is not available on ubuntu images; install qt6-qmake (or rely on qmake6 provided by qt6 packages)
-        sudo apt-get install -y build-essential pkg-config cmake qt6-qmake qt6-base-dev qt6-base-dev-tools libqt6sql6 libqt6sql6-sqlite libsqlite3-dev
+        # Do not request package 'qmake' or 'qt6-qmake' (not available on some runners).
+        # Rely on qt6-base-dev / qt6-base-dev-tools which provide `qmake6`; build step will try qmake6 then qmake.
+        sudo apt-get install -y build-essential pkg-config cmake qt6-base-dev qt6-base-dev-tools libqt6sql6 libqt6sql6-sqlite libsqlite3-dev
 
     - name: Build tests (qmake)
       run: |
